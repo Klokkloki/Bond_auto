@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "630683115803",
+    "project_id": "bondauto-a5cb8",
+    "storage_bucket": "bondauto-a5cb8.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:630683115803:android:601abfb6ffa77d2f4cf3be",
+        "android_client_info": {
+          "package_name": "com.example.bond_auto"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCK_G9o9hXjlMb3KOtjJBVBHwbeTZpdkYo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

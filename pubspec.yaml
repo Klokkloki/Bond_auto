@@ -1,0 +1,77 @@
+name: prototip_next
+description: Bond Авто - международная платформа для покупки и продажи автомобилей
+
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # State Management
+  provider: ^6.1.1
+
+  # HTTP & API
+  http: ^1.1.0
+  dio: ^5.4.0
+
+  # Firebase
+  firebase_core: ^4.1.0
+  firebase_auth: ^6.0.2
+  cloud_firestore: ^6.0.1
+  firebase_storage: ^13.0.1
+  firebase_messaging: ^16.0.1
+  firebase_crashlytics: ^5.0.1
+
+  # Authentication & Security
+  # onfido_sdk: ^2.0.0  # Временно отключен из-за проблем с namespace
+
+  # Payments
+  flutter_stripe: ^12.0.2
+
+  # Maps & Location
+  # google_maps_flutter: ^2.5.3  # Временно отключен
+  # geolocator: ^10.1.0  # Временно отключен
+
+  # File Handling
+  image_picker: ^1.1.1
+  file_picker: ^10.3.2
+  pdf: ^3.10.7
+
+  # Charts & Analytics
+  fl_chart: ^1.1.0
+  firebase_analytics: ^12.0.1
+
+  # Translation
+  # google_ml_kit: ^0.16.3  # Временно отключен из-за проблем с Android
+
+  # Local Storage
+  shared_preferences: ^2.2.2
+  hive: ^2.2.3
+  hive_flutter: ^1.1.0
+
+  # UI & Utils
+  cached_network_image: ^3.3.0
+  formz: ^0.8.0
+
+  # Localization
+  flutter_localizations:
+    sdk: flutter
+  intl: ^0.20.2
+
+  # UI Components
+  cupertino_icons: ^1.0.6
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+
+
+flutter:
+  uses-material-design: true
