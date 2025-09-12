@@ -3,12 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../services/app_state.dart';
 import '../widgets/car_card.dart';
-import '../widgets/search_bar.dart' as custom;
+// import '../widgets/search_bar.dart' as custom; // удалено: отдельный экран поиска
 // Убраны старые виджеты главной, вместо них — новый дизайн секций
 import 'search_screen.dart';
 import 'calculator_screen.dart';
 import 'deals_screen.dart';
 import 'profile_screen.dart';
+import 'subscriptions_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -123,10 +124,7 @@ class _HomeContent extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   _buildTopRow(theme),
-                  const SizedBox(height: 16),
-                  // Поле поиска (используем существующий компонент, он уже тема-агностичен)
-                  const custom.SearchBar(),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 12),
                   // Карточка спецпредложения
                   const _SpecialOfferCard(),
                   const SizedBox(height: 20),
@@ -144,7 +142,7 @@ class _HomeContent extends StatelessWidget {
                     style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 12),
-                  _buildCarsGrid(),
+                  _buildCarsGrid(context),
                   const SizedBox(height: 90),
                 ],
               ),
@@ -158,47 +156,96 @@ class _HomeContent extends StatelessWidget {
   Widget _buildTopRow(ThemeData theme) {
     return Consumer<AppState>(
       builder: (context, appState, _) {
-        return Row(
-          children: [
-            // Аватар пользователя
-            CircleAvatar(
-              radius: 18,
-              backgroundColor: theme.colorScheme.primary.withOpacity(0.15),
-              child: Icon(Icons.person, color: theme.colorScheme.primary),
-            ),
-            const SizedBox(width: 12),
-            // Имя + бейдж
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    appState.currentUser?.fullName ?? 'Гость',
-                    style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),
-                  ),
-                  Row(
-                    children: [
-                      Icon(Icons.verified, color: Colors.amber[600], size: 16),
-                      const SizedBox(width: 4),
-                      Text('Премиум', style: theme.textTheme.labelMedium?.copyWith(color: theme.colorScheme.onSurfaceVariant)),
-                    ],
-                  )
-                ],
+        final userName = appState.currentUser?.fullName ?? 'Гость';
+        return Container(
+          decoration: BoxDecoration(
+            color: theme.colorScheme.surface,
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(color: theme.colorScheme.outlineVariant.withOpacity(0.35)),
+            boxShadow: [
+              BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 12, offset: const Offset(0, 6)),
+            ],
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+          child: Row(
+            children: [
+              GestureDetector(
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(builder: (_) => const ProfileScreen()),
+                  );
+                },
+                child: CircleAvatar(
+                  radius: 18,
+                  backgroundColor: theme.colorScheme.primary.withOpacity(0.12),
+                  child: Icon(Icons.person, color: theme.colorScheme.primary, size: 20),
+                ),
               ),
-            ),
-            _glassCircle(context, icon: Icons.brightness_6_outlined),
-            const SizedBox(width: 10),
-            GestureDetector(
-              onTap: () {
-                // открыть профиль/настройки
-                Navigator.of(context).push(
-                  MaterialPageRoute(builder: (_) => const ProfileScreen()),
-                );
-              },
-              child: _glassCircle(context, icon: Icons.settings_outlined),
-            ),
-          ],
+              const SizedBox(width: 10),
+              Expanded(
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(builder: (_) => const ProfileScreen()),
+                    );
+                  },
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        userName,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w800),
+                      ),
+                      const SizedBox(height: 2),
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.workspace_premium_outlined, color: Colors.amber[700], size: 16),
+                          const SizedBox(width: 4),
+                          Text('Покупатель', style: theme.textTheme.labelSmall?.copyWith(color: theme.colorScheme.onSurfaceVariant)),
+                          const SizedBox(width: 8),
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(builder: (_) => const SubscriptionsScreen()),
+                              );
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                              decoration: BoxDecoration(
+                                color: theme.colorScheme.primary.withOpacity(0.10),
+                                borderRadius: BorderRadius.circular(10),
+                                border: Border.all(color: theme.colorScheme.primary.withOpacity(0.25)),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(Icons.stars_rounded, size: 14, color: theme.colorScheme.primary),
+                                  const SizedBox(width: 4),
+                                  Text('Премиум', style: theme.textTheme.labelSmall?.copyWith(color: theme.colorScheme.primary, fontWeight: FontWeight.w600)),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              GestureDetector(
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(builder: (_) => const ProfileScreen()),
+                  );
+                },
+                child: _glassCircle(context, icon: Icons.settings_outlined),
+              ),
+            ],
+          ),
         );
       },
     );
@@ -224,24 +271,22 @@ class _HomeContent extends StatelessWidget {
     );
   }
 
-  Widget _buildCarsGrid() {
-    return Consumer<AppState>(
-      builder: (context, appState, child) {
-        return GridView.builder(
-          physics: const NeverScrollableScrollPhysics(),
-          shrinkWrap: true,
-          itemCount: appState.featuredCars.length,
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            childAspectRatio: 0.86,
-            crossAxisSpacing: 12,
-            mainAxisSpacing: 12,
-          ),
-          itemBuilder: (context, index) {
-            final car = appState.featuredCars[index];
-            return CarCard(car: car);
-          },
-        );
+  Widget _buildCarsGrid(BuildContext context) {
+    final appState = Provider.of<AppState>(context, listen: false);
+    final items = appState.featuredCars;
+    return GridView.builder(
+      physics: const NeverScrollableScrollPhysics(),
+      shrinkWrap: true,
+      itemCount: items.length,
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        childAspectRatio: 0.86,
+        crossAxisSpacing: 12,
+        mainAxisSpacing: 12,
+      ),
+      itemBuilder: (context, index) {
+        final car = items[index];
+        return CarCard(car: car);
       },
     );
   }
@@ -388,8 +433,8 @@ class _PromoCarousel extends StatelessWidget {
     final theme = Theme.of(context);
     final promos = [
       {'title': 'Подбор Mercedes', 'image': 'https://images.unsplash.com/photo-1502877338535-766e1452684a?q=80&w=800&auto=format&fit=crop'},
-      {'title': 'Tesla – электродрайв', 'image': 'https://images.unsplash.com/photo-1549921296-3fd62a3bba45?q=80&w=800&auto=format&fit=crop'},
-      {'title': 'BMW – динамика', 'image': 'https://images.unsplash.com/photo-1619767886558-efdc259b6b3c?q=80&w=800&auto=format&fit=crop'},
+      {'title': 'Tesla – электродрайв', 'image': 'http://cdn.motorpage.ru/Photos/800/2898.jpg'},
+      {'title': 'BMW – динамика', 'image': 'http://cdn.motorpage.ru/Photos/800/2E36.jpg'},
     ];
     return SizedBox(
       height: 140,

@@ -1,6 +1,8 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../models/car.dart';
+import '../services/app_state.dart';
 
 class CarCard extends StatelessWidget {
   final Car car;
@@ -15,13 +17,13 @@ class CarCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (isHorizontal) {
-      return _buildHorizontalCard();
+      return _buildHorizontalCard(context);
     } else {
-      return _buildVerticalCard();
+      return _buildVerticalCard(context);
     }
   }
 
-  Widget _buildVerticalCard() {
+  Widget _buildVerticalCard(BuildContext context) {
     return ClipRRect(
       borderRadius: BorderRadius.circular(14),
       child: Stack(
@@ -36,8 +38,8 @@ class CarCard extends StatelessWidget {
                   if (progress == null) return child;
                   return Center(
                     child: CircularProgressIndicator(
-                      value: progress.expectedTotalBytes != null
-                          ? progress.cumulativeBytesLoaded /
+                      value: progress?.expectedTotalBytes != null
+                          ? progress!.cumulativeBytesLoaded /
                               (progress.expectedTotalBytes ?? 1)
                           : null,
                     ),
@@ -49,20 +51,12 @@ class CarCard extends StatelessWidget {
               ),
             ),
           ),
-          Positioned(
+          const Positioned(
             left: 0,
             right: 0,
             bottom: 0,
             height: 88,
-            child: Container(
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.bottomCenter,
-                  end: Alignment.topCenter,
-                  colors: [Colors.black54, Colors.transparent],
-                ),
-              ),
-            ),
+            child: _BottomGradient(),
           ),
           Positioned(
             left: 8,
@@ -95,8 +89,25 @@ class CarCard extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: 6),
-                _glassSmallBadge(
-                  child: const Icon(Icons.favorite_border, size: 18),
+                Selector<AppState, bool>(
+                  selector: (_, s) => s.isCarFavorite(car.id),
+                  builder: (context, isFav, _) {
+                    return GestureDetector(
+                      onTap: () => context.read<AppState>().toggleFavorite(car.id),
+                      child: _glassSmallBadge(
+                        child: AnimatedSwitcher(
+                          duration: const Duration(milliseconds: 180),
+                          transitionBuilder: (child, anim) => ScaleTransition(scale: anim, child: child),
+                          child: Icon(
+                            isFav ? Icons.favorite : Icons.favorite_border,
+                            key: ValueKey(isFav),
+                            size: 18,
+                            color: isFav ? Colors.redAccent : Colors.white,
+                          ),
+                        ),
+                      ),
+                    );
+                  },
                 ),
               ],
             ),
@@ -122,7 +133,7 @@ class CarCard extends StatelessWidget {
     );
   }
 
-  Widget _buildHorizontalCard() {
+  Widget _buildHorizontalCard(BuildContext context) {
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(12),
@@ -186,22 +197,44 @@ class CarCard extends StatelessWidget {
                           color: Colors.red,
                         ),
                       ),
-                      if (car.onOrder)
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                          decoration: BoxDecoration(
-                            color: Colors.orange,
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: const Text(
-                            'На заказ',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 10,
-                              fontWeight: FontWeight.bold,
+                      Row(
+                        children: [
+                          if (car.onOrder)
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                              decoration: BoxDecoration(
+                                color: Colors.orange,
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: const Text(
+                                'На заказ',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
                             ),
+                          const SizedBox(width: 8),
+                          Selector<AppState, bool>(
+                            selector: (_, s) => s.isCarFavorite(car.id),
+                            builder: (context, isFav, _) {
+                              return GestureDetector(
+                                onTap: () => context.read<AppState>().toggleFavorite(car.id),
+                                child: AnimatedSwitcher(
+                                  duration: const Duration(milliseconds: 180),
+                                  transitionBuilder: (child, anim) => ScaleTransition(scale: anim, child: child),
+                                  child: Icon(
+                                    isFav ? Icons.favorite : Icons.favorite_border,
+                                    key: ValueKey(isFav),
+                                    color: isFav ? Colors.redAccent : Colors.grey[600],
+                                  ),
+                                ),
+                              );
+                            },
                           ),
-                        ),
+                        ],
+                      )
                     ],
                   ),
                 ],
@@ -225,6 +258,22 @@ class CarCard extends StatelessWidget {
             border: Border.all(color: Colors.white.withOpacity(0.12)),
           ),
           child: child,
+        ),
+      ),
+    );
+  }
+}
+
+class _BottomGradient extends StatelessWidget {
+  const _BottomGradient();
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.bottomCenter,
+          end: Alignment.topCenter,
+          colors: [Colors.black54, Colors.transparent],
         ),
       ),
     );

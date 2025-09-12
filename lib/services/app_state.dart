@@ -11,6 +11,7 @@ class AppState extends ChangeNotifier {
   List<Car> _allCars = [];
   List<Car> _featuredCars = [];
   List<Deal> _deals = [];
+  final Set<String> _favoriteCarIds = <String>{};
 
   ThemeMode get themeMode => _themeMode;
   UserModel? get currentUser => _currentUser;
@@ -18,6 +19,8 @@ class AppState extends ChangeNotifier {
   List<Car> get allCars => _allCars;
   List<Car> get featuredCars => _featuredCars;
   List<Deal> get deals => _deals;
+  List<Car> get favoriteCars => _allCars.where((c) => _favoriteCarIds.contains(c.id)).toList();
+  bool isCarFavorite(String carId) => _favoriteCarIds.contains(carId);
 
   AppState() {
     _loadMockData();
@@ -33,6 +36,7 @@ class AppState extends ChangeNotifier {
   void signOut() {
     _currentUser = null;
     _isAuthenticated = false;
+    _favoriteCarIds.clear();
     notifyListeners();
   }
 
@@ -45,7 +49,7 @@ class AppState extends ChangeNotifier {
         price: '25 000',
         year: '2021',
         km: '45 000 км',
-        imageUrl: 'https://picsum.photos/seed/bmw-320d/1200/800',
+        imageUrl: 'http://cdn.motorpage.ru/Photos/800/11614.jpg',
         vin: 'WBA3A5C5XJ1234567',
         fuelType: 'Дизель',
         transmission: 'Автомат',
@@ -59,7 +63,7 @@ class AppState extends ChangeNotifier {
         onOrder: false,
         hasHistory: true,
         images: [
-          'https://picsum.photos/seed/bmw-320d-1/1200/800',
+          'http://cdn.motorpage.ru/Photos/800/11614.jpg',
           'https://picsum.photos/seed/bmw-320d-2/1200/800',
         ],
         createdAt: DateTime.now().subtract(const Duration(days: 5)),
@@ -72,7 +76,7 @@ class AppState extends ChangeNotifier {
         price: '28 500',
         year: '2022',
         km: '32 000 км',
-        imageUrl: 'https://picsum.photos/seed/mercedes-c200/1200/800',
+        imageUrl: 'http://cdn.motorpage.ru/Photos/800/4F8E.jpg',
         vin: 'WDD2050461A123456',
         fuelType: 'Бензин',
         transmission: 'Автомат',
@@ -86,7 +90,7 @@ class AppState extends ChangeNotifier {
         onOrder: true,
         hasHistory: true,
         images: [
-          'https://picsum.photos/seed/mercedes-c200-1/1200/800',
+          'http://cdn.motorpage.ru/Photos/800/4F8E.jpg',
         ],
         createdAt: DateTime.now().subtract(const Duration(days: 3)),
         updatedAt: DateTime.now(),
@@ -98,7 +102,7 @@ class AppState extends ChangeNotifier {
         price: '22 000',
         year: '2020',
         km: '58 000 км',
-        imageUrl: 'https://picsum.photos/seed/audi-a4/1200/800',
+        imageUrl: 'http://cdn.motorpage.ru/Photos/800/2DE2.jpg',
         vin: 'WAUZZZ8V0LA123456',
         fuelType: 'Дизель',
         transmission: 'Автомат',
@@ -112,7 +116,7 @@ class AppState extends ChangeNotifier {
         onOrder: false,
         hasHistory: false,
         images: [
-          'https://picsum.photos/seed/audi-a4-1/1200/800',
+          'http://cdn.motorpage.ru/Photos/800/2DE2.jpg',
         ],
         createdAt: DateTime.now().subtract(const Duration(days: 7)),
         updatedAt: DateTime.now().subtract(const Duration(days: 2)),
@@ -199,6 +203,15 @@ class AppState extends ChangeNotifier {
 
   void addCar(Car car) {
     _allCars.add(car);
+    notifyListeners();
+  }
+
+  void toggleFavorite(String carId) {
+    if (_favoriteCarIds.contains(carId)) {
+      _favoriteCarIds.remove(carId);
+    } else {
+      _favoriteCarIds.add(carId);
+    }
     notifyListeners();
   }
 

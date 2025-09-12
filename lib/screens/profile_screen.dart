@@ -5,6 +5,8 @@ import '../widgets/profile_header.dart';
 import '../widgets/profile_menu_item.dart';
 import 'kyc_verification_screen.dart';
 import '../services/auth_service.dart';
+import 'subscriptions_screen.dart';
+import 'favorites_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -59,7 +61,9 @@ class ProfileScreen extends StatelessWidget {
             icon: Icons.favorite_outline,
             title: 'Избранное',
             onTap: () {
-              // Открыть избранное
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const FavoritesScreen()),
+              );
             },
           ),
           const Divider(height: 1),
@@ -76,6 +80,17 @@ class ProfileScreen extends StatelessWidget {
             title: 'Уведомления',
             onTap: () {
               // Открыть уведомления
+            },
+          ),
+          const Divider(height: 1),
+          ProfileMenuItem(
+            icon: Icons.workspace_premium_outlined,
+            title: 'Подписки',
+            subtitle: 'Выбрать или изменить тариф',
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const SubscriptionsScreen()),
+              );
             },
           ),
           const Divider(height: 1),
